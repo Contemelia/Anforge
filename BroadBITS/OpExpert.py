@@ -22,6 +22,8 @@ class OpExpert:
     
     def performRequest(self, arguments, custom = None):
         
+        # custom: any in [None, 'integration_login', 'integration_main']
+        
         # This condition is for requests that apply on home
         if not custom:
             
@@ -55,7 +57,34 @@ class OpExpert:
             # arguments[6]: Login API [True/False]
             # arguments[7]: Custom API filter
             # arguments[8]: Data contents table
-            # arguments[9]: Session ID (Provisional)
+            # arguments[9]: Alias key
             # arguments[10]: Session ID
             
-            ...
+            payload = loads(arguments[1])
+            if custom == 'integration_main':
+                if arguments[10]:
+                    payload['auth'] = str(arguments[9])
+                else:
+                    payload['auth'] = ''
+            
+            try:
+                header = b64decode(arguments[2]).decode('utf-8')
+                contentType = search(r'"(Content-Type:[^"]+)"', header).group(1)
+                header = dict(header.split(":") for header in contentType.splitlines())
+            except:
+                header = loads(arguments[2].replace('\\/', '/'))[0]
+                header = header.split(":")
+                header = {header[0] : header[1]}
+            
+            try:
+                if len(payload) > 1 or custom == 'integration_login':
+                    response = post(arguments[0], json = payload, headers = header)
+                    if response.status_code == 200:
+                        return response.json().get('result') if custom == 'integration_login' else response.json()
+                else:
+                    response = get(arguments[0], headers = header)
+                    if response.status_code == 200:
+                        return response.json()
+            except:
+                return False
+                
