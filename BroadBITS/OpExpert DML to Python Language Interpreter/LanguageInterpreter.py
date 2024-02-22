@@ -94,18 +94,6 @@ class Interpreter:
 
 def executeText():
     
-    text = """ACTION getHostList()
-    CONDITION IF 'hosts' = 'Babtain' AND 'Severity' = 'Disaster' {
-    ACTION sendReport(); ACTION sendEmail()
-    }
-    CONDITION IF ('hosts' = 'Zabbix' OR 'Severity' = 'Normal') AND 'id' = '123' {
-    ACTION doNothing()
-    }
-    CONDITION IF 'hosts' = 'Zabbix' {
-    CONDITION IF 'id' = '123' {
-    ACTION getOtherList(); ACTION doNothing()
-    }
-    }"""
     text = """getHostList() AS ASpier
     IF 'hosts' = 'Babtain' AND 'Severity' = 'Disaster' {
     sendReport()
