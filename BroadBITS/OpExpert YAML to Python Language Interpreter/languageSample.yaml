@@ -1,0 +1,31 @@
+# ID: 2024022800
+- type: integration
+  alias: zabbixIntegration
+  parameters:
+    - '5f38872e-08a5-22dd-720b'
+
+# ID: 2024022801
+- type: condition
+  condition: "IF zabbixIntegration['Severity'] = 'Disaster'"
+  action:
+    - type: module
+      alias: receiverEmail
+      parameters:
+        - 'Contacts'
+        - '22dd-720b'
+        - 'email_field'
+    
+    - type: function
+      alias: emailFunction
+      parameters:
+        - 'bc_api_methods'
+        - '22dd-720b-0'
+        - 'description'
+      arguments:
+        - emailID
+      
+    - type: execution
+      alias: false
+      task: emailFunction
+      parameters:
+        - receiverEmail
